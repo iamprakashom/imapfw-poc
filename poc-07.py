@@ -34,7 +34,8 @@ class Message(object):
 
 class Messages(UserList):
     """Enable collections of messages the easy way."""
-    pass
+    def __init__(self, collection=[]):
+   	super().__init__(collection)
 
 
 class Driver(object):
