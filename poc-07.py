@@ -73,9 +73,12 @@ class StateController(object):
         self.driver = driver
         self.state = StateBackend() # Would be an emitter.
 
+    def update(self, messages):
+        """Update the repository with messages."""
+        pass # TODO: compare other's messages with what we have in this repository.
+
     def search(self):
         changedMessages = Messages() # Collection of new, deleted and updated messages.
-        print("search(): creating empty collection of messages: %s"% changedMessages)
         messages = self.driver.search() # Would be async.
         stateMessages = self.state.search() # Would be async.
 
@@ -84,7 +87,16 @@ class StateController(object):
                 # Missing in the other side.
                 changedMessages.append(message)
             else:
-                pass # TODO: compare: did message change?
+                for stateMessage in stateMessages:
+                    if message.uid == stateMessage.uid:
+                        if not message.identical(stateMessage):
+                            changedMessages.append(message)
+
+        for stateMessage in stateMessages:
+            if stateMessage not in messages:
+                # TODO: mark message as destroyed from real repository.
+                changedMessages.append(message)
+
         return changedMessages
 
 
@@ -96,6 +108,14 @@ class Engine(object):
         self.left = StateController(left)
         self.right = StateController(right)
 
+    def debug(self, title):
+        print('\n')
+        print(title)
+        print("rght:       %s"% self.right.driver.messages)
+        print("state rght: %s"% self.right.state.messages)
+        print("left:       %s"% self.left.driver.messages)
+        print("state left: %s"% self.left.state.messages)
+
     def run(self):
         leftMessages = self.left.search() # Would be async.
         rightMessages = self.right.search() # Would be async.
@@ -103,6 +123,9 @@ class Engine(object):
         print("New, deleted and updated messages")
         print("left: %s"% leftMessages)
         print("rght: %s"% rightMessages)
+
+        self.left.update(rightMessages)
+        self.right.update(leftMessages)
 
 
 if __name__ == '__main__':
@@ -128,11 +151,8 @@ if __name__ == '__main__':
 
     # Start engine.
     engine = Engine(left, right)
-    print("Initial content of both sides:")
-    print("rght:       %s"% engine.right.driver.messages)
-    print("state rght: %s"% engine.right.state.messages)
-    print("left:       %s"% engine.left.driver.messages)
-    print("state left: %s"% engine.left.state.messages)
+    engine.debug("Initial content of both sides:")
 
     print("\n# PASS 1")
     engine.run()
+    engine.debug("Run of PASS 1: done.")
