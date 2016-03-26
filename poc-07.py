@@ -26,8 +26,14 @@ class Message(object):
         return self.uid < other
 
     def identical(self, mess):
-        return (mess.uid == self.uid and mess.body == self.body and
-            mess.flags == self.flags)
+        if mess.uid != self.uid:
+            return False
+        if mess.body != self.body:
+            return False
+        if mess.flags != self.flags:
+            return False
+
+        return True # Identical
 
     def markImportant(self):
         self.flags['important'] = True
