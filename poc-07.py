@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 #
 # https://github.com/OfflineIMAP/imapfw/wiki/sync-07
-#
-# HINT 01: the output of the run is wrong. Read it carefully.
 
 
 from functools import total_ordering
@@ -10,14 +8,13 @@ from collections import UserList
 
 @total_ordering
 class Message(object):
-    def __init__(self, uid=None, body=None, flags=['unread']):
+    def __init__(self, uid=None, body=None, flags=None):
         self.uid = uid
         self.body = body
-        self.flags = flags
+        self.flags = {'read': False, 'important': False}
 
     def __repr__(self):
-        return "<Message %s [%s] '%s'>"% (self.uid,
-            ','.join(self.flags), self.body)
+        return "<Message %s [%s] '%s'>"% (self.uid, self.flags, self.body)
 
     def __eq__(self, other):
         return self.uid == other
@@ -31,6 +28,19 @@ class Message(object):
     def identical(self, mess):
         return (mess.uid == self.uid and mess.body == self.body and
             mess.flags == self.flags)
+
+    def markImportant(self):
+        self.flags['important'] = True
+
+    def markRead(self):
+        self.flags['read'] = True
+
+    def unmarkImportant(self):
+        self.flags['important'] = False
+
+    def unmarkRead(self):
+        self.flags['read'] = False
+
 
 class Messages(UserList):
     """Enable collections of messages the easy way."""
@@ -96,7 +106,8 @@ if __name__ == '__main__':
     m1l = Message(1, "1 body") # Same as m1r
 
     m2r = Message(2, "2 body")
-    m2l = Message(2, "2 body", ['read']) # Same as m2r but read.
+    m2l = Message(2, "2 body")
+    m2l.markRead()              # Same as m2r but read.
 
     m3r = Message(3, "3 body") # Not at left.
 
