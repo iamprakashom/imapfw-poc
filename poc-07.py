@@ -8,6 +8,7 @@ from collections import UserList
 
 @total_ordering
 class Message(object):
+    """Fake the real Message class."""
     def __init__(self, uid=None, body=None, flags=None):
         self.uid = uid
         self.body = body
@@ -54,6 +55,7 @@ class Messages(UserList):
 
 
 class Driver(object):
+    """Fake a driver."""
     def __init__(self, list_messages):
         self.messages = Messages(list_messages) # Fake the real data.
 
