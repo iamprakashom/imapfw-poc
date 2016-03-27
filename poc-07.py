@@ -51,9 +51,10 @@ class Message(object):
 
 class Messages(UserList):
     """Enable collections of messages the easy way."""
-    pass
+    pass #TODO: implement collection comparison.
 
 
+#TODO: fake writes on disk.
 class Driver(object):
     """Fake a driver."""
     def __init__(self, list_messages):
@@ -64,22 +65,37 @@ class Driver(object):
 
 
 # Not a driver but APIs interesting here are similar.
+#TODO: fake reads and writes on disk.
 class StateBackend(Driver):
     """Would run in a worker."""
     def __init__(self):
         self.messages = Messages() # Fake the real data.
 
+
 class StateController(object):
-    """State controller for a driver."""
+    """State controller for a driver.
+
+    Notice each state controller owns a driver and is the stranger of the other
+    side.
+
+    The state controller is supposed to communicate with:
+        - our driver;
+        - the engine;
+        - our state backend;
+        - their state backend (read-only).
+    """
+
     def __init__(self, driver):
         self.driver = driver
         self.state = StateBackend() # Would be an emitter.
 
-    def update(self, messages):
-        """Update the repository with messages."""
-        pass # TODO: compare other's messages with what we have in this repository.
+    def update(self, theirMessages):
+        """Update this side with the messages from the other side."""
+        pass #TODO: compare their messages with what we have in this repository.
 
     def search(self):
+        """Explore our messages. Only return changes since previous sync."""
+
         changedMessages = Messages() # Collection of new, deleted and updated messages.
         messages = self.driver.search() # Would be async.
         stateMessages = self.state.search() # Would be async.
@@ -158,3 +174,7 @@ if __name__ == '__main__':
     print("\n# PASS 1")
     engine.run()
     engine.debug("Run of PASS 1: done.")
+
+    #TODO: PASS 2 with same content to validate noop.
+
+    #TODO: PASS 3 with changed messages.
