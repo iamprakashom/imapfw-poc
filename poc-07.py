@@ -63,6 +63,14 @@ class Driver(object):
     def search(self):
         return self.messages
 
+    def update(self, messages):
+        """Update the storage.
+
+        messages: is the collection of messages we have to create, update
+        or remove."""
+
+        pass #TODO
+
 
 # Not a driver but APIs interesting here are similar.
 #TODO: fake reads and writes on disk.
@@ -86,7 +94,7 @@ class StateController(object):
     """
 
     def __init__(self, driver):
-        self.driver = driver
+        self.driver = driver # The driver we own.
         self.state = StateBackend() # Would be an emitter.
 
     def update(self, theirMessages):
