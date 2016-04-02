@@ -51,11 +51,7 @@ class Message(object):
 
 class Messages(UserList):
     """Enable collections of messages the easy way."""
-<<<<<<< HEAD
-    pass
-=======
     pass #TODO: implement collection comparison.
->>>>>>> official/master
 
 
 #TODO: fake writes on disk.
